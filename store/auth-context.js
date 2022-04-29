@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useState } from "react";
 
 export const AuthContext = createContext({
@@ -10,8 +11,14 @@ export const AuthContext = createContext({
 function AuthContextProvider(props){
   const [authToken, setAuthToken] = useState()
 
-  const authenticate = (token) => setAuthToken(token)
-  const logout = () => setAuthToken(null)
+  const authenticate = (token) => {
+    setAuthToken(token)
+    AsyncStorage.setItem("token", token) // key, value - salva il token nel telefono, così chiudendo e riaprendo l'app risultiamo ancora autenticati
+  }
+  const logout = () => {
+    setAuthToken(null)
+    AsyncStorage.removeItem("token")
+  }
 
   const value = {
     token: authToken,
